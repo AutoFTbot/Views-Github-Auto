@@ -6,7 +6,7 @@ url = "https://profile-counter.glitch.me/AutoFTbot/count.svg"
 
 start_time = time.time()
 
-def ambil_count():
+def get_count():
     try:
         response = requests.get(url, timeout=5)
         if response.status_code == 200:
@@ -15,17 +15,23 @@ def ambil_count():
             if matches:
                 return ''.join(matches)
     except Exception as e:
-        print(f"Kasalahan: {e}")
+        print(f"Error: {e}")
     return None
 
-while True:
-    elapsed_minutes = (time.time() - start_time) / 60
-    count = ambil_count()
-    print("\033c", end="")
-    print(f"[⏳] Waktos jalan: {elapsed_minutes:.2f} menit")
-    
-    if count is not None:
-        print(f"[🔥] Jumlah count ayeuna: {count}")
-    else:
-        print("[❌] Gagal ngambil count.")
-    time.sleep(5)
+# Menyimpan hasil ke file log
+with open("output_log.txt", "w") as f:
+    while True:
+        elapsed_minutes = (time.time() - start_time) / 60
+        count = get_count()
+        
+        # Format output untuk log
+        log = f"[⏳] Waktu jalan: {elapsed_minutes:.2f} menit\n"
+        
+        if count is not None:
+            log += f"[🔥] Jumlah count sekarang: {count}\n"
+        else:
+            log += "[❌] Gagal mengambil count.\n"
+        
+        f.write(log)  # Menyimpan log ke file
+
+        time.sleep(5)
